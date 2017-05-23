@@ -76,6 +76,10 @@ server.get('/', restify.serveStatic({
     'directory': __dirname,
     'default': 'index.html'
 }));
+server.get('/ping', (req, res) => {
+    res.statusCode = 200;
+    res.send('Howdy world');
+});
 
 //=========================================================
 // Auth Setup
