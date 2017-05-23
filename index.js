@@ -1,37 +1,3 @@
-// "use strict";
-// var builder = require("botbuilder");
-// var botbuilder_azure = require("botbuilder-azure");
-// var path = require('path');
-
-// var useEmulator = (process.env.NODE_ENV == 'development');
-
-// var connector = useEmulator ? new builder.ChatConnector() : new botbuilder_azure.BotServiceConnector({
-//     appId: process.env['MicrosoftAppId'],
-//     appPassword: process.env['MicrosoftAppPassword'],
-//     stateEndpoint: process.env['BotStateEndpoint'],
-//     openIdMetadata: process.env['BotOpenIdMetadata']
-// });
-
-// var bot = new builder.UniversalBot(connector);
-// bot.localePath(path.join(__dirname, './locale'));
-
-// bot.dialog('/', function (session) {
-//     session.send('Howdy! You said ' + session.message.text);
-// });
-
-// if (useEmulator) {
-//     var restify = require('restify');
-//     var server = restify.createServer();
-//     server.listen(3978, function() {
-//         console.log('test bot endpont at http://localhost:3978/api/messages');
-//     });
-//     server.post('/api/messages', connector.listen());    
-// } else {
-//     module.exports = { default: connector.listen() }
-// }
-
-'use strict';
-
 const builder = require('botbuilder');
 const restify = require('restify');
 const passport = require('passport-restify');
@@ -54,8 +20,8 @@ var appInsightsClient = appInsights.getClient();
 //=========================================================
 
 // Setup Restify Server
-var server = restify.createServer();
-server.listen(process.env.port || process.env.PORT || 3978, function () {
+const server = restify.createServer();
+server.listen(process.env.port || process.env.PORT || 3978, () => {
     console.log('%s listening to %s', server.name, server.url);
 });
 
@@ -193,6 +159,8 @@ function login(session) {
 
     // TODO: Encrypt the address string
     const link = process.env.AUTHBOT_CALLBACKHOST + '/login?address=' + querystring.escape(JSON.stringify(address));
+
+    console.log(link);
 
     var msg = new builder.Message(session)
         .attachments([
