@@ -70,8 +70,13 @@ server.use(expressSession({ secret: process.env.SESSION_SECRET, resave: true, sa
 server.use(passport.initialize());
 
 server.get('/login', function (req, res, next) {
+    
+    console.log('!!!!!!!!');
+    console.log(req);
+
     passport.authenticate('azuread-openidconnect', { failureRedirect: '/login', customState: req.query.address, resourceURL: process.env.MICROSOFT_RESOURCE_GRAPH },
         function (err, user, info) {
+            console.log('$$$$$$$$$$$$$$$', user);
             if (err) {
                 console.log(err);
                 return next(err);
@@ -159,8 +164,6 @@ function login(session) {
 
     // TODO: Encrypt the address string
     const link = process.env.AUTHBOT_CALLBACKHOST + '/login?address=' + querystring.escape(JSON.stringify(address));
-
-    console.log(link);
 
     var msg = new builder.Message(session)
         .attachments([
