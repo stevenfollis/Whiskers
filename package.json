@@ -1,5 +1,11 @@
 {
+  "name": "emptybot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "dependencies": {
+    "botbuilder": "^3.7.0",
+    "botbuilder-azure": "3.0.2",
     "botbuilder": "^3.8.3",
     "express-session": "^1.15.3",
     "moment": "^2.18.1",
@@ -9,5 +15,15 @@
     "request": "^2.81.0",
     "request-promise-native": "^1.0.4",
     "restify": "^4.3.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": "7.7.4"
   }
 }
