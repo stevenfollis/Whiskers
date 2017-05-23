@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "botbuilder": "^3.8.3",
+    "express-session": "^1.15.3",
+    "moment": "^2.18.1",
+    "node-emoji": "^1.5.1",
+    "passport-azure-ad": "^3.0.6",
+    "passport-restify": "^1.0.1",
+    "request": "^2.81.0",
+    "request-promise-native": "^1.0.4",
+    "restify": "^4.3.0"
+  }
+}
