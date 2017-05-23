@@ -315,6 +315,7 @@ bot.dialog('signinPrompt', [
     },
     (session, results) => {
         //resuming
+        console.log('!!!', results);
         session.userData.loginData = JSON.parse(results.response);
         if (session.userData.loginData && session.userData.loginData.magicCode) {
             session.beginDialog('validateCode');
