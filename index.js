@@ -77,6 +77,7 @@ server.get('/login', function (req, res, next) {
     passport.authenticate('azuread-openidconnect', { failureRedirect: '/login', customState: req.query.address, resourceURL: process.env.MICROSOFT_RESOURCE_GRAPH },
         function (err, user, info) {
             console.log('$$$$$$$$$$$$$$$', user);
+            console.log('$$$$$$$$$$$$$$$11', err);
             if (err) {
                 console.log(err);
                 return next(err);
