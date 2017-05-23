@@ -1,5 +1,3 @@
-'use strict';
-
 const builder = require('botbuilder');
 const request = require('request-promise-native');
 const emoji = require('node-emoji');
@@ -18,7 +16,8 @@ module.exports = {
                         .title("What would you like to do?")
                         .buttons([
                             builder.CardAction.imBack(session, 'My Projects', 'My Projects'),
-                            builder.CardAction.imBack(session, 'Search', 'Search')
+                            builder.CardAction.imBack(session, 'Search', 'Search'),
+                            builder.CardAction.imBack(session, 'Logout', 'Logout')
                         ]),
                 ]);
 
@@ -26,7 +25,7 @@ module.exports = {
             builder.Prompts.choice(
                 session,
                 msg,
-                ['My Projects', 'Search'],
+                ['My Projects', 'Search', 'Logout'],
                 {
                     maxRetries: 3,
                     retryPrompt: 'Not a valid option'
@@ -38,7 +37,7 @@ module.exports = {
                 case "My Projects":
 
                     // Get CRM ID
-                    session.userData.crmId = await getCrmId(session.userData.accessTokenCRM);
+                    session.userData.crmId = await getCrmId(session.userData);
 
                     // Get projects
                     const projects = await getProjects(session.userData);
@@ -69,6 +68,12 @@ module.exports = {
                 case "Search":
                     // session.replaceDialog("/search")
                     session.endDialog('Search coming soon!');
+                    break;
+
+                case "Logout":
+                    session.beginDialog('/logout');
+                    break;
+
                 default:
                     session.replaceDialog("/");
                     break;
@@ -77,19 +82,24 @@ module.exports = {
     ]
 }
 
-async function getCrmId(accessTokenCRM) {
+async function getCrmId(userData) {
     return new Promise((resolve, reject) => {
 
         var options = {
-            url: `${process.env.MICROSOFT_RESOURCE_CRM}/api/data/v8.1/systemusers?$filter=contains(domainname,%27stfollis@microsoft.com%27)&$select=systemuserid`,
-            headers: { 'Authorization': accessTokenCRM },
+            url: `${process.env.MICROSOFT_RESOURCE_CRM}/api/data/v8.1/systemusers?$filter=contains(domainname,%27${userData.upn}%27)&$select=systemuserid`,
+            headers: { 'Authorization': userData.accessTokenCRM },
             json: true
         };
 
-        request.get(options).then((result) => {
-            console.log(`Retrieved CRM User ID`);
-            resolve(result.value[0].systemuserid);
-        });;
+        request
+            .get(options)
+            .then((result) => {
+                console.log(`Retrieved CRM User ID`);
+                resolve(result.value[0].systemuserid);
+            })
+            .catch((error) => {
+                reject(error);
+            });
 
     });
 }

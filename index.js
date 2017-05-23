@@ -82,6 +82,19 @@ server.get('/ping', (req, res) => {
 });
 
 //=========================================================
+// Bots Global Actions
+//=========================================================
+
+bot.endConversationAction('goodbye', 'Goodbye :)', { matches: /^goodbye/i });
+bot.beginDialogAction('help', '/help', { matches: /^help/i });
+//bot.deleteUserData('delete', 'Deleted', { matches: /^delete/i });
+bot.on('deleteUserData', function (session, message) {
+
+    console.log('gotit');
+
+});
+
+//=========================================================
 // Auth Setup
 //=========================================================
 
@@ -113,16 +126,19 @@ server.get('/login', function (req, res, next) {
 server.get('/api/OAuthCallback/',
     passport.authenticate('azuread-openidconnect', { failureRedirect: '/login', resourceURL: process.env.MICROSOFT_RESOURCE_GRAPH }),
     (req, res) => {
+
         const address = JSON.parse(req.query.state);
         const magicCode = crypto.randomBytes(4).toString('hex');
-        const messageData = { magicCode: magicCode, accessToken: req.authInfo.accessToken, refreshToken: req.authInfo.refreshToken, name: req.user.displayName };
+        const messageData = { magicCode: magicCode, accessToken: req.authInfo.accessToken, refreshToken: req.authInfo.refreshToken, name: req.user.displayName, upn: req.user.upn };
 
         var continueMsg = new builder.Message().address(address).text(JSON.stringify(messageData));
 
         bot.receive(continueMsg.toMessage());
 
+        // Send a page in the browser displaying the magic code
         var page = "<!doctype html><style>body{text-align: center; padding: 150px;}h1{font-size: 40px;}body{font: 20px Helvetica, sans-serif; color: #333;}article{display: block; text-align: left; width: 650px; margin: 0 auto;}code{font-family:Consolas,monaco,monospace;}</style><article> <h1>Welcome " + req.user.displayName + "!</h1> <div> <p>Please copy this code and paste it back to your chat so your authentication can complete:</p><code>" + magicCode + "</code></div></article>";
         res.end(page);
+
     });
 
 passport.serializeUser(function (user, done) {
@@ -202,7 +218,14 @@ bot.dialog('/account', Account.Dialog);
 bot.dialog('/find', Find.Dialog);
 bot.dialog('/winwire', Winwire.Dialog);
 bot.dialog('/project', Project.Dialog);
-bot.dialog('/logout', Logout.Dialog);
+bot.dialog('/logout', Logout.Dialog).triggerAction({
+    matches: /^logout$/,
+    onSelectAction: (session, args, next) => {
+        // Add the help dialog to the dialog stack 
+        // (override the default behavior of replacing the stack)
+        session.beginDialog();
+    }
+});
 bot.dialog('/backToMenu', backToMenu.Dialog);
 
 bot.dialog('signin', [
@@ -327,6 +350,7 @@ bot.dialog('signinPrompt', [
         if (results.response) {
             //code validated
             session.userData.userName = session.userData.loginData.name;
+            session.userData.upn = session.userData.loginData.upn;
             session.endDialogWithResult({ response: true });
         } else {
             session.endDialogWithResult({ response: false });

@@ -8,7 +8,8 @@ module.exports = {
             session.userData.accessToken = null;
             session.userData.accessTokenCRM = null;
             session.userData.refreshToken = null;
-
+            session.userData.crmId = null;
+            
             session.endDialog();
         }
     ]
