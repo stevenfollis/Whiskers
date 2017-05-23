@@ -1,12 +1,11 @@
 {
-  "name": "emptybot",
+  "name": "whiskers",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "botbuilder": "^3.7.0",
-    "botbuilder-azure": "3.0.2",
     "botbuilder": "^3.8.3",
+    "botbuilder-azure": "3.0.2",
     "express-session": "^1.15.3",
     "moment": "^2.18.1",
     "node-emoji": "^1.5.1",
@@ -16,10 +15,17 @@
     "request-promise-native": "^1.0.4",
     "restify": "^4.3.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb": "^15.0.1",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^5.0.3",
+    "eslint-plugin-react": "^7.0.1"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node index.js",
+    "lint": "eslint ."
   },
   "author": "",
   "license": "MIT",
