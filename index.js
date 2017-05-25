@@ -169,14 +169,14 @@ function login(session) {
     ]);
   session.send(msg);
 
-  builder.Prompts.text(session, 'You must first sign into your account.');
+  // builder.Prompts.text(session, 'You must first sign into your account.');
 }
 
 // Dialogs
 const Account = require('./dialogs/account');
 const Find = require('./dialogs/find');
 const Winwire = require('./dialogs/winwire');
-const Project = require('./dialogs/project');
+const Project = require('./dialogs/project/project');
 const Logout = require('./dialogs/logout');
 const backToMenu = require('./dialogs/backToMenu');
 

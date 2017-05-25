@@ -65,7 +65,6 @@ module.exports = {
         });
     },
     async (session, results) => {
-
       switch (results.response.entity) {
 
         case 'My Projects': {
@@ -86,15 +85,22 @@ module.exports = {
               .subtitle(`Last updated ${moment(project.modifiedon).fromNow()}`)
               .text('Select this project with the button')
               .buttons([
-                builder.CardAction.imBack(session, 'New project update', 'Status Update'),
+                builder.CardAction.imBack(session, 'Status Update', 'Status Update'),
               ]);
           });
 
           // Attach cards to message
           msg.attachments(attachments);
 
-          // Send message ending the dialog
-          session.send(msg).endDialog();
+          // Send message with choice options
+          builder.Prompts.choice(
+            session,
+            msg,
+            ['Status Update'],
+            {
+              maxRetries: 3,
+              retryPrompt: 'Not a valid option',
+            });
 
           break;
         }
@@ -112,6 +118,14 @@ module.exports = {
 
         default: {
           session.replaceDialog('/');
+          break;
+        }
+      }
+    },
+    (session, result) => {
+      switch (result.response.entity) {
+        case 'Status Update': {
+          
           break;
         }
       }
