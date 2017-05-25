@@ -167,7 +167,10 @@ function login(session) {
         .text(`Let's get started! ${emoji.get('smiley')} Please sign-in below...`)
         .button('Sign-In', link),
     ]);
-  session.send(msg);
+
+  session.send('Please open this link in your browser right meow:');
+  session.send(link);
+  // session.send(msg);
 
   // builder.Prompts.text(session, 'You must first sign into your account.');
 }
