@@ -172,7 +172,7 @@ function login(session) {
   session.send(link);
   // session.send(msg);
 
-  // builder.Prompts.text(session, 'You must first sign into your account.');
+  builder.Prompts.text(session, 'You must first sign into your account.');
 }
 
 // Dialogs
