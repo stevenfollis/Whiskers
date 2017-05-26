@@ -176,10 +176,12 @@ function login(session) {
 
 // Dialogs
 const Project = require('./dialogs/project/project');
-const Logout = require('./dialogs/logout');
+const ProjectStatusCreate = require('./dialogs/project/status/create');
+const Logout = require('./dialogs/logout/logout');
 
 // Setup dialogs
 bot.dialog('/project', Project.Dialog);
+bot.dialog('/projectstatuscreate', ProjectStatusCreate.Dialog);
 bot.dialog('/logout', Logout.Dialog).triggerAction({
   matches: /^logout$/,
   onSelectAction: (session) => {

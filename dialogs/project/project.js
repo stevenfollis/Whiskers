@@ -15,7 +15,6 @@ async function getCrmId(userData) {
     request
       .get(options)
       .then((result) => {
-        console.log('Retrieved CRM User ID');
         resolve(result.value[0].systemuserid);
       })
       .catch((error) => {
@@ -130,7 +129,11 @@ module.exports = {
     (session, result) => {
       switch (result.response.entity) {
         case 'Status Update': {
-          
+          session.replaceDialog('/projectstatuscreate');
+          break;
+        }
+        default: {
+          session.endDialog();
           break;
         }
       }
