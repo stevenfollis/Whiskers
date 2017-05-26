@@ -8,12 +8,12 @@ const querystring = require('querystring');
 const emoji = require('node-emoji');
 const refresh = require('./helpers/token');
 
-/*
-var telemetryModule = require('./helpers/telemetry-module');
-var appInsights = require("applicationinsights");
+// Configure Application Insights
+const telemetryModule = require('./helpers/telemetry-module');
+const appInsights = require('applicationinsights');
+
 appInsights.setup(process.env.APPINSIGHTS_INSTRUMENTATIONKEY).start();
-var appInsightsClient = appInsights.getClient();
-*/
+const appInsightsClient = appInsights.getClient();
 
 //= ========================================================
 // Bot Setup
@@ -152,8 +152,8 @@ passport.use(new OIDCStrategy(strategy,
 //= ========================================================
 
 function login(session) {
-  // var telemetryData = telemetryModule.createTelemetry(session);
-  // appInsightsClient.trackEvent("botLaunched", telemetryData);
+  const telemetryData = telemetryModule.createTelemetry(session);
+  appInsightsClient.trackEvent('botLaunched', telemetryData);
 
   // Generate signin link
   const address = session.message.address;
@@ -165,9 +165,8 @@ function login(session) {
     .attachments([
       new builder.HeroCard(session)
         .text(`Let's get started! ${emoji.get('smiley')} Please sign-in below...`)
-        // .button('Sign-In', link),
         .buttons([
-          builder.CardAction.openUrl(session, link, 'Sign In')
+          builder.CardAction.openUrl(session, link, 'Sign In'),
         ]),
     ]);
   session.send(msg);
@@ -176,27 +175,19 @@ function login(session) {
 }
 
 // Dialogs
-const Account = require('./dialogs/account');
-const Find = require('./dialogs/find');
-const Winwire = require('./dialogs/winwire');
 const Project = require('./dialogs/project/project');
 const Logout = require('./dialogs/logout');
-const backToMenu = require('./dialogs/backToMenu');
 
 // Setup dialogs
-bot.dialog('/account', Account.Dialog);
-bot.dialog('/find', Find.Dialog);
-bot.dialog('/winwire', Winwire.Dialog);
 bot.dialog('/project', Project.Dialog);
 bot.dialog('/logout', Logout.Dialog).triggerAction({
   matches: /^logout$/,
   onSelectAction: (session) => {
     // Add the help dialog to the dialog stack
     // (override the default behavior of replacing the stack)
-    session.beginDialog();
+    session.endConversation('Bye');
   },
 });
-bot.dialog('/backToMenu', backToMenu.Dialog);
 
 bot.dialog('signin', [
   (session) => {
@@ -336,8 +327,8 @@ bot.dialog('validateCode', [
       session.endDialogWithResult({ response: false });
     } else if (code === session.userData.loginData.magicCode) {
 
-      // var telemetryData = telemetryModule.createTelemetry(session);
-      // appInsightsClient.trackEvent("userLoggedIn");
+      const telemetryData = telemetryModule.createTelemetry(session);
+      appInsightsClient.trackEvent('userLoggedIn');
 
       // Authenticated, save
       session.userData.accessToken = session.userData.loginData.accessToken;
@@ -355,8 +346,8 @@ bot.dialog('validateCode', [
         session.endDialogWithResult({ response: true });
       });
     } else {
-      // const telemetryData = telemetryModule.createTelemetry(session);
-      // appInsightsClient.trackEvent("invalidCode", telemetryData);
+      const telemetryData = telemetryModule.createTelemetry(session);
+      appInsightsClient.trackEvent('invalidCode', telemetryData);
 
       session.send('Hmm... Looks like that was an invalid code. Please try again.');
       session.replaceDialog('validateCode');

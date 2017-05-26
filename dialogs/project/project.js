@@ -107,12 +107,17 @@ module.exports = {
 
         case 'Search': {
           // session.replaceDialog("/search")
-          session.endDialog('Search coming soon!');
+          session.send('Search coming soon!');
+          session.replaceDialog('/');
           break;
         }
 
         case 'Logout': {
+          // Run logout dialog
           session.beginDialog('/logout');
+
+          // End project dialog
+          session.endDialog();
           break;
         }
 
