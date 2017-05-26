@@ -163,14 +163,14 @@ function login(session) {
 
   const msg = new builder.Message(session)
     .attachments([
-      new builder.SigninCard(session)
+      new builder.HeroCard(session)
         .text(`Let's get started! ${emoji.get('smiley')} Please sign-in below...`)
-        .button('Sign-In', link),
+        // .button('Sign-In', link),
+        .buttons([
+          builder.CardAction.openUrl(session, link, 'Sign In')
+        ]),
     ]);
-
-  session.send('Please open this link in your browser right meow:');
-  session.send(link);
-  // session.send(msg);
+  session.send(msg);
 
   builder.Prompts.text(session, 'You must first sign into your account.');
 }
