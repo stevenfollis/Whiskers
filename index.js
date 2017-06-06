@@ -188,11 +188,6 @@ bot.dialog('/engagementstatuscreate', EngagementStatusCreate.Dialog);
 bot.dialog('/search', Search.Dialog);
 bot.dialog('/logout', Logout.Dialog).triggerAction({
   matches: /^logout$/,
-  onSelectAction: (session) => {
-    // Add the help dialog to the dialog stack
-    // (override the default behavior of replacing the stack)
-    session.endConversation('Bye');
-  },
 });
 
 bot.dialog('signin', [

@@ -11,6 +11,7 @@ async function getCrmId(userData) {
       json: true,
     };
 
+    // Query the API
     request
       .get(options)
       .then((result) => {
@@ -65,6 +66,7 @@ module.exports = {
       msg.attachments(attachments);
 
       // Send message with choice options
+      session.send('Here are your active projects:');
       builder.Prompts.choice(
         session,
         msg,

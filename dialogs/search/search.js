@@ -6,7 +6,7 @@ const moment = require('moment');
 async function searchEngagements(userData, query) {
   return new Promise((resolve, reject) => {
     const options = {
-      url: `${process.env.MICROSOFT_RESOURCE_CRM}/api/data/v8.1/ee_projects?$filter=contains(ee_projectname,'${query}')&$top=10`,
+      url: `${process.env.MICROSOFT_RESOURCE_CRM}/api/data/v8.1/ee_projects?$filter=contains(ee_projectname,'${query}')&$orderby=modifiedon desc&$top=10`,
       headers: { Authorization: userData.accessTokenCRM },
       json: true,
     };
