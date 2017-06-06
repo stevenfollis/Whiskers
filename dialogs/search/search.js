@@ -50,7 +50,7 @@ module.exports = {
             .subtitle(`Last updated ${moment(engagement.modifiedon).fromNow()}`)
             .text('Lorem ipsum')
             .buttons([
-              builder.CardAction.imBack(session, 'Browser', 'Browser'),
+              builder.CardAction.openUrl(session, `${process.env.MICROSOFT_RESOURCE_CRM}/main.aspx?etc=10096&extraqs=formid=33679b2b-bfd5-4e84-a63d-13aa63146ebb&pagetype=entityrecord&id={${engagement.ee_projectid}}`, 'Browser'),
             ]);
         });
 
