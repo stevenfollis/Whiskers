@@ -187,7 +187,7 @@ bot.dialog('/engagementmy', EngagementMy.Dialog);
 bot.dialog('/engagementstatuscreate', EngagementStatusCreate.Dialog);
 bot.dialog('/search', Search.Dialog);
 bot.dialog('/logout', Logout.Dialog).triggerAction({
-  matches: /^logout$/,
+  matches: /^(logout|reset)$/,
 });
 
 bot.dialog('signin', [
