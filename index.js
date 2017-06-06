@@ -176,11 +176,13 @@ function login(session) {
 
 // Dialogs
 const Project = require('./dialogs/project/project');
+const ProjectMy = require('./dialogs/project/my/my');
 const ProjectStatusCreate = require('./dialogs/project/status/create');
 const Logout = require('./dialogs/logout/logout');
 
 // Setup dialogs
 bot.dialog('/project', Project.Dialog);
+bot.dialog('/projectmy', ProjectMy.Dialog);
 bot.dialog('/projectstatuscreate', ProjectStatusCreate.Dialog);
 bot.dialog('/logout', Logout.Dialog).triggerAction({
   matches: /^logout$/,
@@ -241,7 +243,7 @@ bot.dialog('workPrompt', [
             builder.CardAction.imBack(session, Find.Label, Find.Label),
             builder.CardAction.imBack(session, Winwire.Label, Winwire.Label),
             builder.CardAction.imBack(session, Project.Label, Project.Label),
-            builder.CardAction.imBack(session, Logout.Label, Logout.Label)
+            builder.CardAction.imBack(session, Logout.Label, Logout.Label),
           ]),
       ]);
     builder.Prompts.choice(
