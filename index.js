@@ -175,15 +175,17 @@ function login(session) {
 }
 
 // Dialogs
-const Project = require('./dialogs/project/project');
-const ProjectMy = require('./dialogs/project/my/my');
-const ProjectStatusCreate = require('./dialogs/project/status/create');
+const Engagement = require('./dialogs/engagement/engagement');
+const EngagementMy = require('./dialogs/engagement/my/my');
+const EngagementStatusCreate = require('./dialogs/engagement/status/create');
 const Logout = require('./dialogs/logout/logout');
+const Search = require('./dialogs/search/search');
 
 // Setup dialogs
-bot.dialog('/project', Project.Dialog);
-bot.dialog('/projectmy', ProjectMy.Dialog);
-bot.dialog('/projectstatuscreate', ProjectStatusCreate.Dialog);
+bot.dialog('/engagement', Engagement.Dialog);
+bot.dialog('/engagementmy', EngagementMy.Dialog);
+bot.dialog('/engagementstatuscreate', EngagementStatusCreate.Dialog);
+bot.dialog('/search', Search.Dialog);
 bot.dialog('/logout', Logout.Dialog).triggerAction({
   matches: /^logout$/,
   onSelectAction: (session) => {
@@ -218,7 +220,7 @@ bot.dialog('/', [
         session.userData.accessTokenCRM = body.accessToken;
 
         session.send(`Howdy ${session.userData.userName}! ${emoji.get('smiley')}`);
-        session.beginDialog('/project');
+        session.beginDialog('/engagement');
       });
     } else {
       session.endConversation(`Goodbye! ${emoji.get('wave')}`);

@@ -12,7 +12,7 @@ module.exports = {
         .attachmentLayout(builder.AttachmentLayout.list)
         .attachments([
           new builder.HeroCard(session)
-            .title('The project is in which phase?')
+            .title('The engagement is in which phase?')
             .buttons([
               builder.CardAction.imBack(session, 'New', 'New'),
               builder.CardAction.imBack(session, 'Active', 'Active'),
@@ -38,7 +38,7 @@ module.exports = {
       // Define variable to hold phase
       let phase;
 
-      // Store project status
+      // Store engagement status
       switch (results.response.entity) {
         case 'New':
           phase = 100000003;
@@ -90,18 +90,37 @@ module.exports = {
       next();
     },
     (session) => {
-      // Send confirmation
-      builder.Prompts.confirm(session, 'Are you sure you wish to cancel your order?');
+      // Create message with card
+      const msg = new builder.Message(session)
+        .attachmentLayout(builder.AttachmentLayout.list)
+        .attachments([
+          new builder.HeroCard(session)
+            .title('Would you like to submit this update?')
+            .buttons([
+              builder.CardAction.imBack(session, 'Submit', 'Submit'),
+              builder.CardAction.imBack(session, 'Cancel', 'Cancel'),
+            ]),
+        ]);
+
+      // Send message with choice options
+      builder.Prompts.choice(
+        session,
+        msg,
+        ['Submit', 'Cancel'],
+        {
+          maxRetries: 3,
+          retryPrompt: 'Not a valid option',
+        });
     },
     (session, results) => {
       // Upload message, else end dialog
-      switch (results.response) {
-        case true:
-          session.send('Thanks for providing this status update.');
+      switch (results.response.entity) {
+        case 'Submit':
+          session.send('Thanks for providing this status update. (DEMO for now)');
           session.replaceDialog('/');
           break;
-        case false:
-          session.send('Cancelled status update');
+        case 'Cancel':
+          session.send('Cancelled your status update');
           session.replaceDialog('/');
           break;
         default:

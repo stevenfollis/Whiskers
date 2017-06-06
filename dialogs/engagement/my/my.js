@@ -22,8 +22,8 @@ async function getCrmId(userData) {
   });
 }
 
-async function getProjects(userData) {
-  // Create OData URL for the user's active projects
+async function getEngagements(userData) {
+  // Create OData URL for the user's active engagements
   const url = `${process.env.MICROSOFT_RESOURCE_CRM}/api/data/v8.1/ee_projects%20?$select=ee_projectname,ee_engagementcurrentphase,modifiedon%20&$filter=(%20_ownerid_value%20eq%20${userData.crmId}%20or%20_ee_coowner1_value%20eq%20${userData.crmId}%20or%20_ee_coowner2_value%20eq%20${userData.crmId}%20or%20_ee_coowner3_value%20eq%20${userData.crmId}%20or%20_ee_coowner4_value%20eq%20${userData.crmId}%20or%20_ee_coowner5_value%20eq%20${userData.crmId}%20)%20and%20ee_engagementcurrentphase%20eq%20100000002`;
 
   const options = {
@@ -36,26 +36,26 @@ async function getProjects(userData) {
 }
 
 module.exports = {
-  Label: 'My Projects',
+  Label: 'My Engagements',
   Dialog: [
     async (session) => {
       // Get CRM ID
       session.userData.crmId = await getCrmId(session.userData);
 
-      // Get Projects
-      const projects = await getProjects(session.userData);
-      session.dialogData.projects = projects;
+      // Get Engagements
+      const engagements = await getEngagements(session.userData);
+      session.dialogData.engagements = engagements;
 
       // Create Carousel
       const msg = new builder.Message(session);
       msg.attachmentLayout(builder.AttachmentLayout.carousel);
 
       // Create Cards
-      const attachments = projects.value.map((project) => {
+      const attachments = engagements.value.map((engagement) => {
         return new builder.HeroCard(session)
-          .title(project.ee_projectname)
-          .subtitle(`Last updated ${moment(project.modifiedon).fromNow()}`)
-          .text('Select this project with the button')
+          .title(engagement.ee_projectname)
+          .subtitle(`Last updated ${moment(engagement.modifiedon).fromNow()}`)
+          .text('Select this engagement with the button')
           .buttons([
             builder.CardAction.imBack(session, 'Status Update', 'Status Update'),
           ]);
@@ -75,7 +75,7 @@ module.exports = {
         });
     },
     (session, results) => {
-      session.replaceDialog('/projectstatuscreate');
+      session.replaceDialog('/engagementstatuscreate');
     },
   ],
 };

@@ -5,7 +5,7 @@ const moment = require('moment');
 moment.locale('en');
 
 module.exports = {
-  Label: 'Project Information',
+  Label: 'Engagement Information',
   Dialog: [
     (session) => {
       // Create message with card
@@ -15,7 +15,7 @@ module.exports = {
           new builder.HeroCard(session)
             .title('What would you like to do?')
             .buttons([
-              builder.CardAction.imBack(session, 'My Projects', 'My Projects'),
+              builder.CardAction.imBack(session, 'My Engagements', 'My Engagements'),
               builder.CardAction.imBack(session, 'Search', 'Search'),
               builder.CardAction.imBack(session, 'Logout', 'Logout'),
             ]),
@@ -25,7 +25,7 @@ module.exports = {
       builder.Prompts.choice(
         session,
         msg,
-        ['My Projects', 'Search', 'Logout'],
+        ['My Engagements', 'Search', 'Logout'],
         {
           maxRetries: 3,
           retryPrompt: 'Not a valid option',
@@ -34,15 +34,13 @@ module.exports = {
     async (session, results) => {
       switch (results.response.entity) {
 
-        case 'My Projects': {
-          session.replaceDialog('/projectmy');
+        case 'My Engagements': {
+          session.replaceDialog('/engagementmy');
           break;
         }
 
         case 'Search': {
-          // session.replaceDialog("/search")
-          session.send('Search coming soon!');
-          session.replaceDialog('/');
+          session.replaceDialog('/search');
           break;
         }
 
