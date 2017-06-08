@@ -3,9 +3,8 @@ const request = require('request-promise-native');
 const emoji = require('node-emoji');
 const moment = require('moment');
 
-module.exports = {
-  Label: 'Update Status',
-  Dialog: [
+module.exports = (bot) => {
+  bot.dialog('/engagementstatuscreate', [
     (session, args) => {
       // Create message with card
       const msg = new builder.Message(session)
@@ -127,5 +126,5 @@ module.exports = {
           break;
       }
     },
-  ],
+  ]);
 };

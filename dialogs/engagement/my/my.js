@@ -36,9 +36,8 @@ async function getEngagements(userData) {
   return request.get(options);
 }
 
-module.exports = {
-  Label: 'My Engagements',
-  Dialog: [
+module.exports = (bot) => {
+  bot.dialog('/engagementmy', [
     async (session) => {
       // Get CRM ID
       session.userData.crmId = await getCrmId(session.userData);
@@ -80,5 +79,5 @@ module.exports = {
     (session, results) => {
       session.replaceDialog('/engagementstatuscreate');
     },
-  ],
+  ]);
 };

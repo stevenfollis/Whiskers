@@ -4,9 +4,8 @@ const emoji = require('node-emoji');
 const moment = require('moment');
 moment.locale('en');
 
-module.exports = {
-  Label: 'Engagement Information',
-  Dialog: [
+module.exports = (bot) => {
+  bot.dialog('/engagement', [
     (session) => {
       // Create message with card
       const msg = new builder.Message(session)
@@ -17,6 +16,7 @@ module.exports = {
             .buttons([
               builder.CardAction.imBack(session, 'My Engagements', 'My Engagements'),
               builder.CardAction.imBack(session, 'Search', 'Search'),
+              builder.CardAction.openUrl(session, 'https://msit.powerbi.com/groups/me/dashboards/bce731bb-0cdb-4e60-99e3-4f7c590e2e64', 'PowerBI'),
               builder.CardAction.imBack(session, 'Logout', 'Logout'),
             ]),
         ]);
@@ -60,5 +60,5 @@ module.exports = {
         }
       }
     },
-  ],
+  ]);
 };

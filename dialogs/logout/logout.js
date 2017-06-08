@@ -1,8 +1,7 @@
 const emoji = require('node-emoji');
 
-module.exports = {
-  Label: 'Logout',
-  Dialog: [
+module.exports = (bot) => {
+  bot.dialog('/logout', [
     (session) => {
       // Clear all userData
       session.userData.userName = null;
@@ -16,5 +15,7 @@ module.exports = {
       session.endConversation(`Catch you later alligator. ${emoji.get('crocodile')}`);
       session.beginDialog('/');
     },
-  ],
+  ]).triggerAction({
+    matches: /^(logout|reset)$/,
+  });
 };

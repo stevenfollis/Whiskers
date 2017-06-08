@@ -22,9 +22,8 @@ async function searchEngagements(userData, query) {
   });
 }
 
-module.exports = {
-  Label: 'Search',
-  Dialog: [
+module.exports = (bot) => {
+  bot.dialog('/search', [
     (session) => {
       builder.Prompts.text(session, 'What query should I use?');
     },
@@ -62,5 +61,7 @@ module.exports = {
         session.endDialog(msg);
       }
     },
-  ],
+  ]).cancelAction('cancelSearch', 'Search Canceled', {
+    matches: /^cancel/i,
+  });
 };

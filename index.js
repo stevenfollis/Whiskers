@@ -1,12 +1,10 @@
 const builder = require('botbuilder');
 const restify = require('restify');
-const passport = require('passport-restify');
-const OIDCStrategy = require('passport-azure-ad').OIDCStrategy;
 const expressSession = require('express-session');
-const crypto = require('crypto');
 const querystring = require('querystring');
 const emoji = require('node-emoji');
 const refresh = require('./helpers/token');
+const passport = require('passport-restify');
 
 // Configure Application Insights
 const telemetryModule = require('./helpers/telemetry-module');
@@ -67,85 +65,8 @@ server.use(expressSession({
 }));
 server.use(passport.initialize());
 
-server.get('/login', (req, res, next) => {
-
-  passport.authenticate('azuread-openidconnect', { failureRedirect: '/login', customState: req.query.address, resourceURL: process.env.MICROSOFT_RESOURCE_GRAPH },
-    (err, user) => {
-      if (err) {
-        console.log(err);
-        return next(err);
-      }
-      if (!user) {
-        return res.redirect('/login');
-      }
-      req.logIn(user, (logInError) => {
-        if (logInError) {
-          return next(logInError);
-        }
-        return res.send(`Howdy ${req.user.displayName}`);
-      });
-    })(req, res, next);
-});
-
-server.get('/api/OAuthCallback/',
-  passport.authenticate('azuread-openidconnect', { failureRedirect: '/login', resourceURL: process.env.MICROSOFT_RESOURCE_GRAPH }),
-  (req, res) => {
-    const address = JSON.parse(req.query.state);
-    const magicCode = crypto.randomBytes(4).toString('hex');
-    const messageData = {
-      magicCode,
-      accessToken: req.authInfo.accessToken,
-      refreshToken: req.authInfo.refreshToken,
-      name: req.user.displayName,
-      upn: req.user.upn,
-    };
-
-    const continueMsg = new builder.Message().address(address).text(JSON.stringify(messageData));
-
-    bot.receive(continueMsg.toMessage());
-
-    // Send a page in the browser displaying the magic code
-    const page = `<!doctype html><style>body{text-align: center; padding: 150px;}h1{font-size: 40px;}body{font: 20px Helvetica, sans-serif; color: #333;}article{display: block; text-align: left; width: 650px; margin: 0 auto;}code{font-family:Consolas,monaco,monospace;}</style><article> <h1>Welcome ${req.user.displayName}!</h1> <div> <p>Please copy this code and paste it back to your chat so your authentication can complete:</p><code>${magicCode}</code></div></article>`;
-    res.end(page);
-  });
-
-passport.serializeUser((user, done) => {
-  done(null, user);
-});
-
-passport.deserializeUser((id, done) => {
-  done(null, id);
-});
-
-const strategy = {
-  redirectUrl: `${process.env.AUTHBOT_CALLBACKHOST}/api/OAuthCallback`,
-  realm: process.env.MICROSOFT_REALM,
-  clientID: process.env.MICROSOFT_CLIENT_ID,
-  clientSecret: process.env.MICROSOFT_CLIENT_SECRET,
-  validateIssuer: false,
-  allowHttpForRedirectUrl: true,
-  issuer: null,
-  identityMetadata: `https://login.microsoftonline.com/${process.env.MICROSOFT_REALM}/.well-known/openid-configuration`,
-  skipUserProfile: true,
-  scope: null,
-  loggingLevel: 'error',
-  nonceLifetime: null,
-  responseType: 'code id_token',
-  responseMode: 'query',
-  passReqToCallback: true,
-};
-
-passport.use(new OIDCStrategy(strategy,
-  (req, iss, sub, profile, accessToken, refreshToken, done) => {
-    if (!profile.oid) {
-      return done(new Error('No oid found'), null);
-    }
-    // asynchronous verification, for effect...
-    process.nextTick(() => {
-      const tokens = { accessToken, refreshToken };
-      return done(null, profile, tokens);
-    });
-  }));
+// Passport Setup
+require('./helpers/passport')(server, bot);
 
 //= ========================================================
 // Bots Dialogs
@@ -174,21 +95,12 @@ function login(session) {
   builder.Prompts.text(session, 'You must first sign into your account.');
 }
 
-// Dialogs
-const Engagement = require('./dialogs/engagement/engagement');
-const EngagementMy = require('./dialogs/engagement/my/my');
-const EngagementStatusCreate = require('./dialogs/engagement/status/create');
-const Logout = require('./dialogs/logout/logout');
-const Search = require('./dialogs/search/search');
-
 // Setup dialogs
-bot.dialog('/engagement', Engagement.Dialog);
-bot.dialog('/engagementmy', EngagementMy.Dialog);
-bot.dialog('/engagementstatuscreate', EngagementStatusCreate.Dialog);
-bot.dialog('/search', Search.Dialog);
-bot.dialog('/logout', Logout.Dialog).triggerAction({
-  matches: /^(logout|reset)$/,
-});
+require('./dialogs/engagement/engagement')(bot);
+require('./dialogs/engagement/my/my')(bot);
+require('./dialogs/engagement/status/create')(bot);
+require('./dialogs/logout/logout')(bot);
+require('./dialogs/search/search')(bot);
 
 bot.dialog('signin', [
   (session) => {
@@ -224,62 +136,6 @@ bot.dialog('/', [
   (session) => {
     if (!session.userData.userName) {
       session.endConversation(`Goodbye! ${emoji.get('wave')} You have been logged out.`);
-    }
-  },
-]);
-
-bot.dialog('workPrompt', [
-  (session) => {
-    const msg = new builder.Message(session)
-      .attachmentLayout(builder.AttachmentLayout.list)
-      .attachments([
-        new builder.HeroCard(session)
-          .title('What would you like to do?')
-          .buttons([
-            builder.CardAction.imBack(session, Account.Label, Account.Label),
-            builder.CardAction.imBack(session, Find.Label, Find.Label),
-            builder.CardAction.imBack(session, Winwire.Label, Winwire.Label),
-            builder.CardAction.imBack(session, Project.Label, Project.Label),
-            builder.CardAction.imBack(session, Logout.Label, Logout.Label),
-          ]),
-      ]);
-    builder.Prompts.choice(
-      session,
-      msg,
-      [Account.Label, Find.Label, Winwire.Label, Project.Label, Logout.Label],
-      {
-        maxRetries: 3,
-        retryPrompt: 'Not a valid option',
-      });
-  },
-  (session, result) => {
-    if (!result.response) {
-      // exhausted attemps and no selection, start over
-      session.send(`Ooops! Too many attempts ${emoji.get('slightly_frowning_face')} But don't worry, I'm handling that exception and you can try again!`);
-      return session.endDialog();
-    }
-
-    // on error, start over
-    session.on('error', (err) => {
-      session.send('Failed with message: %s', err.message);
-      session.endDialog();
-    });
-
-    // continue on proper dialog
-    const selection = result.response.entity;
-    switch (selection) {
-      case Account.Label:
-        return session.beginDialog('/account');
-      case Find.Label:
-        return session.beginDialog('/find');
-      case Winwire.Label:
-        return session.beginDialog('/winwire');
-      case Project.Label:
-        return session.beginDialog('/project');
-      case Logout.Label:
-        return session.beginDialog('/logout');
-      default:
-        break;
     }
   },
 ]);
@@ -327,7 +183,6 @@ bot.dialog('validateCode', [
     if (code === 'quit') {
       session.endDialogWithResult({ response: false });
     } else if (code === session.userData.loginData.magicCode) {
-
       const telemetryData = telemetryModule.createTelemetry(session);
       appInsightsClient.trackEvent('userLoggedIn');
 
