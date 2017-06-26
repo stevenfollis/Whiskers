@@ -12,7 +12,7 @@ const moment = require('moment');
 async function searchEngagements(userData, query) {
   const options = {
     method: 'GET',
-    url: `${process.env.MICROSOFT_RESOURCE_CRM}/api/data/v8.1/ee_projects?$filter=contains(ee_projectname,'${query}')&$orderby=modifiedon desc&$top=10`,
+    url: `${process.env.MICROSOFT_RESOURCE_CRM}/api/data/v8.2/ee_projects?$filter=contains(ee_projectname,'${query}')&$orderby=modifiedon desc&$top=10`,
     headers: { Authorization: userData.accessTokenCRM },
     json: true,
   };

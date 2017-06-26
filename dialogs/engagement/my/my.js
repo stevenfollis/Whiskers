@@ -6,7 +6,7 @@ const moment = require('moment');
 async function getCrmId(userData) {
   return new Promise((resolve, reject) => {
     const options = {
-      url: `${process.env.MICROSOFT_RESOURCE_CRM}/api/data/v8.1/systemusers?$filter=contains(domainname,%27${userData.upn}%27)&$select=systemuserid`,
+      url: `${process.env.MICROSOFT_RESOURCE_CRM}/api/data/v8.2/systemusers?$filter=contains(domainname,%27${userData.upn}%27)&$select=systemuserid`,
       headers: { Authorization: userData.accessTokenCRM },
       json: true,
     };
@@ -25,7 +25,7 @@ async function getCrmId(userData) {
 
 async function getEngagements(userData) {
   // Create OData URL for the user's active engagements
-  const url = `${process.env.MICROSOFT_RESOURCE_CRM}/api/data/v8.1/ee_projects%20?$select=ee_projectname,ee_engagementcurrentphase,modifiedon%20&$filter=(%20_ownerid_value%20eq%20${userData.crmId}%20or%20_ee_coowner1_value%20eq%20${userData.crmId}%20or%20_ee_coowner2_value%20eq%20${userData.crmId}%20or%20_ee_coowner3_value%20eq%20${userData.crmId}%20or%20_ee_coowner4_value%20eq%20${userData.crmId}%20or%20_ee_coowner5_value%20eq%20${userData.crmId}%20)%20and%20ee_engagementcurrentphase%20eq%20100000002`;
+  const url = `${process.env.MICROSOFT_RESOURCE_CRM}/api/data/v8.2/ee_projects%20?$select=ee_projectname,ee_engagementcurrentphase,modifiedon%20&$filter=(%20_ownerid_value%20eq%20${userData.crmId}%20or%20_ee_coowner1_value%20eq%20${userData.crmId}%20or%20_ee_coowner2_value%20eq%20${userData.crmId}%20or%20_ee_coowner3_value%20eq%20${userData.crmId}%20or%20_ee_coowner4_value%20eq%20${userData.crmId}%20or%20_ee_coowner5_value%20eq%20${userData.crmId}%20)%20and%20ee_engagementcurrentphase%20eq%20100000002`;
 
   const options = {
     url,
