@@ -58,8 +58,19 @@ module.exports = (bot) => {
           .text('Select this engagement with the button')
           .buttons([
             builder.CardAction.openUrl(session, `${process.env.MICROSOFT_RESOURCE_CRM}/main.aspx?etc=10096&extraqs=formid=33679b2b-bfd5-4e84-a63d-13aa63146ebb&pagetype=entityrecord&id={${engagement.ee_projectid}}`, 'Browser'),
-            builder.CardAction.imBack(session, 'Status Update', 'Status Update'),
+            builder.CardAction.imBack(session, `Status Update for ${engagement.ee_projectname}`, 'Status Update'),
           ]);
+      });
+
+      // Create list for options dialog
+      const choices = engagements.value.map((engagement) => {
+        return `Status Update for ${engagement.ee_projectname}`;
+      });
+
+      // Generate a mapping of project names to ids
+      session.dialogData.projectIds = {};
+      engagements.value.forEach((engagement) => {
+        session.dialogData.projectIds[engagement.ee_projectname] = engagement.ee_projectid;
       });
 
       // Attach cards to message
@@ -70,14 +81,18 @@ module.exports = (bot) => {
       builder.Prompts.choice(
         session,
         msg,
-        ['Status Update'],
+        choices,
         {
           maxRetries: 3,
           retryPrompt: 'Not a valid option',
         });
     },
     (session, results) => {
-      session.replaceDialog('/engagementstatuscreate');
+      // Map project name to project id
+      const projectId = session.dialogData.projectIds[results.response.entity.split('Status Update for ')[1]];
+
+      // Pass ID as an arg to status creation dialog
+      session.replaceDialog('/engagementstatuscreate', projectId);
     },
   ]);
 };
