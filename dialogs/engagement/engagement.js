@@ -60,5 +60,7 @@ module.exports = (bot) => {
         }
       }
     },
-  ]);
+  ]).triggerAction({
+    matches: /^(menu|home)$/,
+  });
 };
