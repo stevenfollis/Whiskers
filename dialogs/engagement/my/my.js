@@ -1,6 +1,5 @@
 const builder = require('botbuilder');
 const request = require('request-promise-native');
-const emoji = require('node-emoji');
 const moment = require('moment');
 
 async function getCrmId(userData) {
@@ -44,6 +43,14 @@ module.exports = (bot) => {
 
       // Get Engagements
       const engagements = await getEngagements(session.userData);
+
+      // Ensure user actually has active project(s)
+      if (engagements.value.length === 0) {
+        session.send('Sorry but I cannot find any active projects for you.');
+        session.replaceDialog('/');
+      }
+
+      // Persist engagements
       session.dialogData.engagements = engagements;
 
       // Create Carousel
@@ -52,10 +59,13 @@ module.exports = (bot) => {
 
       // Create Cards
       const attachments = engagements.value.map((engagement) => {
+        // Abbreviate the overview
+        const overview = engagement.ee_engagementoverview ? `${engagement.ee_engagementoverview.substr(0, 100)}...` : null;
+
         return new builder.HeroCard(session)
           .title(engagement.ee_projectname)
           .subtitle(`Last updated ${moment(engagement.modifiedon).fromNow()}`)
-          .text('Select this engagement with the button')
+          .text(overview)
           .buttons([
             builder.CardAction.openUrl(session, `${process.env.MICROSOFT_RESOURCE_CRM}/main.aspx?etc=10096&extraqs=formid=33679b2b-bfd5-4e84-a63d-13aa63146ebb&pagetype=entityrecord&id={${engagement.ee_projectid}}`, 'Browser'),
             builder.CardAction.imBack(session, `Status Update for ${engagement.ee_projectname}`, 'Status Update'),
@@ -63,9 +73,7 @@ module.exports = (bot) => {
       });
 
       // Create list for options dialog
-      const choices = engagements.value.map((engagement) => {
-        return `Status Update for ${engagement.ee_projectname}`;
-      });
+      const choices = engagements.value.map(engagement => `Status Update for ${engagement.ee_projectname}`);
 
       // Generate a mapping of project names to ids
       session.dialogData.projectIds = {};

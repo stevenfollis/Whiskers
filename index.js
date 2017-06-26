@@ -124,9 +124,15 @@ bot.dialog('/', [
           session.endDialog();
         }
 
+        // Stash access token in persisted userData
         session.userData.accessTokenCRM = body.accessToken;
 
-        session.send(`Howdy ${session.userData.userName}! ${emoji.get('smiley')}`);
+        // Say howdy like a genteel bot
+        if (!session.userData.howdy) {
+          session.send(`Howdy ${session.userData.userName}! ${emoji.get('smiley')}`);
+          session.userData.howdy = true;
+        }
+
         session.beginDialog('/engagement');
       });
     } else {
