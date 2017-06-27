@@ -69,6 +69,8 @@ module.exports = (bot) => {
       }
     },
   ]).cancelAction('cancelSearch', 'Search Canceled', {
-    matches: /^cancel/i,
+    matches: /(cancel|back)/i,
+  }).triggerAction({
+    matches: /search/i,
   });
 };

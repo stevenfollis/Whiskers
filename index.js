@@ -101,6 +101,7 @@ require('./dialogs/engagement/my/my')(bot);
 require('./dialogs/engagement/status/create')(bot);
 require('./dialogs/logout/logout')(bot);
 require('./dialogs/search/search')(bot);
+require('./dialogs/first-run/first-run')(bot);
 
 bot.dialog('signin', [
   (session) => {
