@@ -5,6 +5,7 @@ const querystring = require('querystring');
 const emoji = require('node-emoji');
 const refresh = require('./helpers/token');
 const passport = require('passport-restify');
+const botbuilder_azure = require('botbuilder-azure');
 
 // Configure Application Insights
 const telemetryModule = require('./helpers/telemetry-module');
@@ -16,6 +17,16 @@ const appInsightsClient = appInsights.getClient();
 //= ========================================================
 // Bot Setup
 //= ========================================================
+
+
+const documentDbOptions = {
+  host: 'https://azwhiskers.documents.azure.com:443/', // Host for local DocDb emulator
+  masterKey: 'DWPbjb6cXzveKc6OQanDng7iJ26tNXsGg0F8wwJRpysSOh02xQqY6Nb6IiGWp0eIxw6Aq7gjim6LQ5A8kxxgVw==', // Fixed key for local DocDb emulator
+  database: 'whiskersbot',
+  collection: 'state',
+};
+const docDbClient = new botbuilder_azure.DocumentDbClient(documentDbOptions);
+const tableStorage = new botbuilder_azure.AzureBotStorage({ gzipData: false }, docDbClient);
 
 // Setup Restify Server
 const server = restify.createServer();
@@ -31,7 +42,7 @@ const connector = new builder.ChatConnector({
 });
 const bot = new builder.UniversalBot(connector, {
   persistConversationData: true,
-});
+}).set('storage', tableStorage);
 
 bot.use(builder.Middleware.sendTyping());
 
@@ -50,7 +61,6 @@ server.get('/ping', (req, res) => {
 //= ========================================================
 
 bot.endConversationAction('goodbye', 'Goodbye :)', { matches: /^goodbye/i });
-bot.beginDialogAction('help', '/help', { matches: /^help/i });
 
 //= ========================================================
 // Auth Setup
@@ -102,6 +112,7 @@ require('./dialogs/engagement/status/create')(bot);
 require('./dialogs/logout/logout')(bot);
 require('./dialogs/search/search')(bot);
 require('./dialogs/first-run/first-run')(bot);
+require('./dialogs/help/help')(bot);
 
 bot.dialog('signin', [
   (session) => {

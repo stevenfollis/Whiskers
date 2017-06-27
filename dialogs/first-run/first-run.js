@@ -4,7 +4,7 @@ module.exports = (bot) => {
   // Add first run dialog
   bot.dialog('firstRun', (session) => {
     // Update userProfile
-    session.userData.firstRun = false;
+    session.userData.firstRun = true;
 
     // Create Message
     const msg = new builder.Message(session);
@@ -26,7 +26,7 @@ module.exports = (bot) => {
         .title('Provide Status Update')
         .text('Want to provide an update? Answer a few questions and I\'ll handle everything'),
       new builder.HeroCard(session)
-        .title('Search all Engagements')
+        .title('Search All Engagements')
         .text('Looking for a particular engagmenet? Let me query CRM for you'),
     ]);
 

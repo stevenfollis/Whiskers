@@ -105,6 +105,6 @@ module.exports = (bot) => {
   ]).cancelAction('cancelSearch', 'Understood', {
     matches: /(cancel|back)/i,
   }).triggerAction({
-    matches: /my projects/i,
+    matches: /(my projects|update)/i,
   });
 };

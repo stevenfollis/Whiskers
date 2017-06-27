@@ -6,7 +6,7 @@
   "dependencies": {
     "applicationinsights": "^0.20.1",
     "botbuilder": "^3.8.3",
-    "botbuilder-azure": "3.0.2",
+    "botbuilder-azure": "^3.0.2",
     "express-session": "^1.15.3",
     "moment": "^2.18.1",
     "node-emoji": "^1.5.1",

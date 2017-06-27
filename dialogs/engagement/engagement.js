@@ -12,7 +12,7 @@ module.exports = (bot) => {
         .attachmentLayout(builder.AttachmentLayout.list)
         .attachments([
           new builder.HeroCard(session)
-            .title('What would you like to do?')
+            .title('How may I be of assistance?')
             .buttons([
               builder.CardAction.imBack(session, 'My Engagements', 'My Engagements'),
               builder.CardAction.imBack(session, 'Search', 'Search'),
