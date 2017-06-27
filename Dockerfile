@@ -1,4 +1,4 @@
-FROM node:8.1.2
+FROM node:7.10.0
 
 EXPOSE 3978
 EXPOSE 443
