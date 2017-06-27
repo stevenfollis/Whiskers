@@ -67,7 +67,7 @@ module.exports = (bot) => {
           .subtitle(`Last updated ${moment(engagement.modifiedon).fromNow()}`)
           .text(overview)
           .buttons([
-            builder.CardAction.openUrl(session, 'https://azure.microsoft.com/en-us/services/storage/', 'Learn More'),
+            builder.CardAction.openUrl(session, 'https://cnecrm.crm.dynamics.com/main.aspx?etc=10096&extraqs=formid=33679b2b-bfd5-4e84-a63d-13aa63146ebb&pagetype=entityrecord&id={505a68bf-0d4a-e711-80ef-3863bb2e0660}/', 'Learn More'),
             //builder.CardAction.openUrl(session, `${process.env.MICROSOFT_RESOURCE_CRM}/main.aspx?etc=10096&extraqs=formid=33679b2b-bfd5-4e84-a63d-13aa63146ebb&pagetype=entityrecord&id={${engagement.ee_projectid}}`, 'Browser'),
             builder.CardAction.imBack(session, `Status Update for ${engagement.ee_projectname}`, 'Status Update'),
           ]);
