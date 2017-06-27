@@ -67,7 +67,7 @@ module.exports = (bot) => {
           .subtitle(`Last updated ${moment(engagement.modifiedon).fromNow()}`)
           .text(overview)
           .buttons([
-            builder.CardAction.openUrl(session, `${process.env.MICROSOFT_RESOURCE_CRM}/main.aspx?etc=10096&pagetype=entityrecord&id={${engagement.ee_projectid}}`, 'Browser'),
+            builder.CardAction.openUrl(session, 'https%3A%2F%2Fcnecrm.crm.dynamics.com%2Fmain.aspx%3Fetc%3D10096%26extraqs%3Dformid%3D33679b2b-bfd5-4e84-a63d-13aa63146ebb%26pagetype%3Dentityrecord%26id%3D%7B505a68bf-0d4a-e711-80ef-3863bb2e0660%7D', 'Browser'),
             builder.CardAction.imBack(session, `Status Update for ${engagement.ee_projectname}`, 'Status Update'),
           ]);
       });
