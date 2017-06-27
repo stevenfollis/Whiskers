@@ -51,7 +51,7 @@ module.exports = (bot) => {
               .subtitle(`Last updated ${moment(engagement.modifiedon).fromNow()}`)
               .text(overview)
               .buttons([
-                builder.CardAction.openUrl(session, `${process.env.MICROSOFT_RESOURCE_CRM}/main.aspx?etc=10096&extraqs=formid=33679b2b-bfd5-4e84-a63d-13aa63146ebb&pagetype=entityrecord&id={${engagement.ee_projectid}}`, 'Browser'),
+                builder.CardAction.openUrl(session, `${process.env.MICROSOFT_RESOURCE_CRM}/main.aspx?etc=10096&extraqs=formid%3d33679b2b-bfd5-4e84-a63d-13aa63146ebb&id=%7b${engagement.ee_projectid}%7d&pagetype=entityrecord`, 'Browser'),
               ]);
           });
 
