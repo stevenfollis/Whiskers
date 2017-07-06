@@ -23,7 +23,7 @@ async function searchEngagements(userData, query) {
 module.exports = (bot) => {
   bot.dialog('/search', [
     (session) => {
-      builder.Prompts.text(session, `What would you like to search for? ${emoji.get('mag')}`);
+      builder.Prompts.text(session, `What project name would you like to search for? ${emoji.get('mag')}`);
     },
     async (session, results) => {
       // Get query string

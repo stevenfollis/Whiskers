@@ -109,6 +109,10 @@ module.exports = (bot) => {
     },
   ]).cancelAction('cancelSearch', 'Understood', {
     matches: /(cancel|back)/i,
+    onSelectAction: (session) => {
+      console.log('shaboomie');
+      session.replaceDialog('engagementmy');
+    },
   }).triggerAction({
     matches: /(my projects|update)/i,
   });
