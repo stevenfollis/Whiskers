@@ -93,6 +93,7 @@ module.exports = (bot) => {
 
       // Store status in dialog data
       session.dialogData.phase = phase;
+      session.dialogData.phaseReadable = results.response.entity;
 
       next();
     },
@@ -115,10 +116,18 @@ module.exports = (bot) => {
       next();
     },
     (session) => {
-      // Create message with card
+      // Confirm submission
       const msg = new builder.Message(session)
         .attachmentLayout(builder.AttachmentLayout.list)
         .attachments([
+          new builder.HeroCard(session)
+            .title('Thanks! Here\'s what I have:'),
+          new builder.HeroCard(session)
+            .text(`Phase: ${session.dialogData.phaseReadable}`),
+          new builder.HeroCard(session)
+            .text(`Status: ${session.dialogData.status}`),
+          new builder.HeroCard(session)
+            .text(`Next Steps: ${session.dialogData.nextSteps}`),
           new builder.HeroCard(session)
             .title('Would you like to submit this update?')
             .buttons([
@@ -142,8 +151,20 @@ module.exports = (bot) => {
       switch (results.response.entity) {
         case 'Submit':
           try {
+            // Create status update
             await createStatusUpdate(session.userData, session.dialogData);
-            session.send(`Thanks for providing this status update. You're good to go! ${emoji.get('thumbsup')}`);
+
+            // Send card to user with a link to the engagement
+            const msg = new builder.Message(session)
+              .attachmentLayout(builder.AttachmentLayout.list)
+              .attachments([
+                new builder.HeroCard(session)
+                  .title(`Thanks for providing this status update. You're good to go! ${emoji.get('thumbsup')}`)
+                  .buttons([
+                    builder.CardAction.openUrl(session, `${process.env.MICROSOFT_RESOURCE_CRM}/main.aspx?etc=10096&extraqs=formid%3d33679b2b-bfd5-4e84-a63d-13aa63146ebb&id=%7b${session.dialogData.projectId}%7d&pagetype=entityrecord`, 'Browser'),
+                  ]),
+              ]);
+            session.send(msg);
             session.replaceDialog('/');
           } catch (error) {
             session.send('My apologies, however there was an error submitting your status update');
@@ -152,7 +173,7 @@ module.exports = (bot) => {
           }
           break;
         case 'Cancel':
-          session.send('Cancelled your status update');
+          session.send(`Cancelled your status update ${emoji.get('scissors')}`);
           session.replaceDialog('/');
           break;
         default:
