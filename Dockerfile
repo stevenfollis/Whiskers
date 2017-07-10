@@ -1,5 +1,5 @@
 # Uses a lightweight Alpine image
-FROM node:8.1.3
+FROM node:8.0.0-alpine
 
 # Open Port 443 for https traffic
 EXPOSE 443
