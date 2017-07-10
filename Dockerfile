@@ -1,4 +1,4 @@
-# Uses a lightweight Alpine image
+# Uses slim as Alpine is unavailable for 7.* and 8.* breaks the Web App
 FROM node:7.10-slim
 
 # Open Port 443 for https traffic
