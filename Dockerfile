@@ -1,12 +1,15 @@
-FROM node:7.10.0
+# Uses a lightweight Alpine image
+FROM node:8.1.3-alpine
 
-EXPOSE 3978
+# Open Port 443 for https traffic
 EXPOSE 443
-EXPOSE 56791
 
+# Copy application files into container
 COPY . /app
 
+# Install dependencies via npm
 WORKDIR /app
 RUN npm install
 
+# Start application
 CMD ["npm", "start"]
