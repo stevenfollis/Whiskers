@@ -5,21 +5,14 @@ const expressSession = require('express-session');
 const emoji = require('node-emoji');
 const refresh = require('./helpers/token');
 const passport = require('passport-restify');
-const botbuilderAzure = require('botbuilder-azure');
+const stateHelper = require('./helpers/state');
 
 //= ========================================================
 // Bot Setup
 //= ========================================================
 
 // State Configuration
-const documentDbOptions = {
-  host: 'https://azwhiskers.documents.azure.com:443/', // Host for local DocDb emulator
-  masterKey: 'DWPbjb6cXzveKc6OQanDng7iJ26tNXsGg0F8wwJRpysSOh02xQqY6Nb6IiGWp0eIxw6Aq7gjim6LQ5A8kxxgVw==', // Fixed key for local DocDb emulator
-  database: 'whiskersbot',
-  collection: 'state',
-};
-const docDbClient = new botbuilderAzure.DocumentDbClient(documentDbOptions);
-const tableStorage = new botbuilderAzure.AzureBotStorage({ gzipData: false }, docDbClient);
+const tableStorage = stateHelper.getClient();
 
 // Setup Restify Server
 const server = restify.createServer();
