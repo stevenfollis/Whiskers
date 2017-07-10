@@ -125,6 +125,8 @@ module.exports = (bot) => {
           new builder.HeroCard(session)
             .text(`Phase: ${session.dialogData.phaseReadable}`),
           new builder.HeroCard(session)
+            .text(`Phase: ${session.dialogData.phaseReadable}`),
+          new builder.HeroCard(session)
             .text(`Status: ${session.dialogData.status}`),
           new builder.HeroCard(session)
             .text(`Next Steps: ${session.dialogData.nextSteps}`),
@@ -152,7 +154,7 @@ module.exports = (bot) => {
         case 'Submit':
           try {
             // Create status update
-            await createStatusUpdate(session.userData, session.dialogData);
+            // await createStatusUpdate(session.userData, session.dialogData);
 
             // Send card to user with a link to the engagement
             const msg = new builder.Message(session)
