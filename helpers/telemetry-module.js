@@ -1,3 +1,4 @@
+require('dotenv').config();
 // Configure Application Insights
 const appInsights = require('applicationinsights');
 
