@@ -3,15 +3,23 @@ const request = require('request-promise-native');
 const moment = require('moment');
 
 async function getCrmId(userData) {
+  // Create OData URL to get the ownerid for a given user's UPN
+  const url = [
+    `${process.env.MICROSOFT_RESOURCE_CRM}/api/data/v8.2/systemusers`,
+    `?$filter=contains(domainname, '${userData.upn}')`,
+    '&$select=ownerid',
+  ].join('');
+
+  // Create object to configure the HTTP request
   const options = {
     method: 'GET',
-    url: `${process.env.MICROSOFT_RESOURCE_CRM}/api/data/v8.2/systemusers?$filter=contains(domainname, '${userData.upn}')&$select=ownerid`,
+    url,
     headers: { Authorization: userData.accessTokenCRM },
     json: true,
   };
 
   // Query the API
-  return request.get(options);
+  return request(options);
 }
 
 async function getEngagements(userData) {
@@ -21,15 +29,19 @@ async function getEngagements(userData) {
     '/api/data/v8.2/ee_projects',
     '?$select=ee_projectname,ee_engagementcurrentphase,modifiedon',
     `&$filter=(_ownerid_value eq ${userData.crmId} or _ee_coowner1_value eq ${userData.crmId} or _ee_coowner2_value eq ${userData.crmId} or _ee_coowner3_value eq ${userData.crmId} or _ee_coowner4_value eq ${userData.crmId} or _ee_coowner5_value eq ${userData.crmId} ) and ee_engagementcurrentphase eq 100000002`,
-    '&$orderby=modifiedon desc'].join('');
+    '&$orderby=modifiedon desc',
+  ].join('');
 
+  // Create object to configure the HTTP request
   const options = {
+    method: 'GET',
     url,
     headers: { Authorization: userData.accessTokenCRM },
     json: true,
   };
 
-  return request.get(options);
+  // Query the API
+  return request(options);
 }
 
 module.exports = (bot) => {
@@ -85,7 +97,7 @@ module.exports = (bot) => {
         msg.attachments(attachments);
 
         // Send message with choice options
-        session.send('Here are your active projects:');
+        session.send(`Here are your ${session.dialogData.engagements.value.length} active projects:`);
         builder.Prompts.choice(
           session,
           msg,
@@ -110,8 +122,7 @@ module.exports = (bot) => {
   ]).cancelAction('cancelSearch', 'Understood', {
     matches: /(cancel|back)/i,
     onSelectAction: (session) => {
-      console.log('shaboomie');
-      session.replaceDialog('engagementmy');
+      session.replaceDialog('/');
     },
   }).triggerAction({
     matches: /(my projects|update)/i,
