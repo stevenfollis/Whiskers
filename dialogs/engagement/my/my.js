@@ -119,7 +119,7 @@ module.exports = (bot) => {
       // Pass ID as an arg to status creation dialog
       session.replaceDialog('/engagementstatuscreate', projectId);
     },
-  ]).cancelAction('cancelSearch', 'Understood', {
+  ]).cancelAction('cancelSearch', 'Understood.', {
     matches: /(cancel|back)/i,
     onSelectAction: (session) => {
       session.replaceDialog('/');
